@@ -1,1 +1,6 @@
 _subdirectory: template
+
+dummy_question:
+  type: str
+  help: This is just a dummy question to see if things are working?
+
