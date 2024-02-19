@@ -3,4 +3,8 @@ _subdirectory: template
 dummy_question:
   type: str
   help: This is just a dummy question to see if things are working?
+dummy_question2:
+  type: str
+  help: This is just another dummy question to see if things are working?
+
 
