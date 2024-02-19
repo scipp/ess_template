@@ -7,7 +7,7 @@ Usage example:
 
 ```sh
 # Add this template to an already existing repo
-copier copy -a .copier-answers.ess.yml https://github.com/scipp/ess_reduction_copier_template.git .
+copier copy -a .copier-answers.ess.yml https://github.com/scipp/ess_template.git .
 git add .
 git commit -am 'Apply ess template'
 ```
