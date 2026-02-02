@@ -1,0 +1,32 @@
+name: CI
+
+env:
+  MIN_PYTHON_VERSION: '3.11'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  formatting:
+    name: Formatting, static analysis and rendering test
+    runs-on: 'ubuntu-24.04'
+    env:
+      DUMMYPROJECTPATH: './test-dummy'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MIN_PYTHON_VERSION }}
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files
+      - uses: pre-commit-ci/lite-action@v1.1.0
+        if: always()
+        with:
+          msg: Apply automatic formatting
+      - run: pip install copier
+      - run: copier copy ./ "${DUMMYPROJECTPATH}"
+      - run: tree "${DUMMYPROJECTPATH}" -a
