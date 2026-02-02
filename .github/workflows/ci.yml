@@ -29,4 +29,4 @@ jobs:
           msg: Apply automatic formatting
       - run: pip install copier
       - run: copier copy ./ "${DUMMYPROJECTPATH}"
-      - run: tree ./"${DUMMYPROJECTPATH}" -a
+      - run: tree "${DUMMYPROJECTPATH}" -a
