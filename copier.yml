@@ -79,3 +79,7 @@ related_projects:
     For example, "Scipp,Sciline,Plopp".
   when: "{% if template != 'ess' %}true{% endif %}"
 
+_tasks:
+  - command: "copier copy gh:scipp/ess_template -vcs-ref subpackage-template ./packages/{{ subpackages[0].name }} "
+    when: "{% if template == 'ess' %}true{% endif %}"
+
