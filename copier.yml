@@ -1,2 +1,18 @@
 _subdirectory: template
 _answers_file: .copier-answers.ess.yml
+# Questions
+subpackages:
+  type: yaml
+  multiline: true
+  help: Subpackages information. Name, description and dependencies.
+  default:
+    # Include the existing packages as defaults for easier template settings for now.
+    # They should be deleted once we have the answer file in the ess project.
+    - name: essreduce
+      description: Common data reduction tools (core)
+      dependencies: []
+    - name: essimaging
+      description: Neutron imaging (ODIN, TBL, YMIR)
+      dependencies:
+        - essreduce
+

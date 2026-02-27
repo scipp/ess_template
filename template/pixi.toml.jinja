@@ -1,0 +1,62 @@
+[workspace]
+name = "ess"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+version = "2026.2.0"
+
+[dependencies]
+python = "3.11.*"
+
+# ==================== Parameterized tasks ====================
+
+[tasks.test]
+cmd = "pytest packages/{% raw %}{{ package }}{% endraw %}/tests/"
+args = ["package"]
+
+[tasks.docs]
+cmd = "python -m sphinx -v -b html -d /tmp/docs_doctrees packages/{% raw %}{{ package }}{% endraw %}/docs packages/{% raw %}{{ package }}{% endraw %}/html"
+args = ["package"]
+
+# ==================== Package features ====================
+
+{% for package in subpackages %}# {{ package.name }} {% if package.name == "essreduce" %}(core package, no workspace deps){% else %}(depends on {{ ', '.join(package.dependencies) }}){% endif %}
+[feature.{{ package.name }}.pypi-dependencies]
+{{ package.name }} = { path = "packages/{{ package.name }}", editable = true, extras = ["test"] }
+
+{% endfor %}# ==================== Lint feature ====================
+
+[feature.lint.pypi-dependencies]
+pre-commit = "*"
+ruff = ">=0.15"
+
+[feature.lint.tasks]
+lint = "pre-commit run --all-files"
+check = "ruff check ."
+format = "ruff format ."
+
+# ==================== Docs feature ====================
+
+[feature.docs.dependencies]
+pandoc = "*"
+
+# Per-package docs features (install with docs extra)
+{% for package in subpackages %}[feature.docs-{{ package.name }}.pypi-dependencies]
+{{ package.name }} = { path = "packages/{{ package.name }}", editable = true, extras = ["test", "docs"] }
+
+{% endfor %}# ==================== Environments ====================
+
+[environments]
+# Default: all packages (for full dev setup)
+default = { features = [{% for package in subpackages %}"{{ package.name }}"{% if not loop.last %}, {% endif %}{% endfor %}], solve-group = "default" }
+
+# Per-package test environments (include workspace dep features)
+{% for package in subpackages %}{{ package.name }} = { features = ["{{ package.name }}"{% if package.dependencies %}, {% endif %}{% for dep in package.dependencies %}"{{ dep }}"{% if not loop.last %}, {% endif %}{% endfor %}], solve-group = "default" }
+{% endfor %}
+# Lower-bound test environments (separate resolution)
+{% for package in subpackages %}lb-{{ package.name }} = { features = ["{{ package.name }}"{% if package.dependencies %}, {% endif %}{% for dep in package.dependencies %}"{{ dep }}"{% if not loop.last %}, {% endif %}{% endfor %}], solve-group = "lower-bound" }
+{% endfor %}
+# Docs environments (package with docs extra + pandoc)
+{% for package in subpackages %}docs-{{ package.name }} = { features = ["docs-{{ package.name }}", {% for dep in package.dependencies %}"docs-{{ dep }}", {% endfor %}"docs"], solve-group = "default" }
+{% endfor %}
+# Lint environment (standalone, no package deps)
+lint = { features = ["lint"], solve-group = "lint" }
