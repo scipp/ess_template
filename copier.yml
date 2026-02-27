@@ -1,6 +1,13 @@
-_subdirectory: template
-_answers_file: .copier-answers.ess.yml
+_subdirectory: "{% if template=='ess' %}template{% else %}subpackage-template{% endif %}"
+_answers_file: .copier-answers.{{ template }}.yml
 # Questions
+template:
+  type: str
+  choices:
+    - ess
+    - subpackages
+  default: ess
+
 subpackages:
   type: yaml
   multiline: true
@@ -15,4 +22,60 @@ subpackages:
       description: Neutron imaging (ODIN, TBL, YMIR)
       dependencies:
         - essreduce
+  when: "{% if template == 'ess' %}true{% endif %}"
+
+# Subpackages Questions
+
+projectname:
+  type: str
+  help: What is your project name?
+  when: "{% if template != 'ess' %}true{% endif %}"
+prettyname:
+  default: '{{projectname|capitalize}}'
+  type: str
+  help: What is your project name in title case?
+  when: "{% if template != 'ess' %}true{% endif %}"
+orgname:
+  default: scipp
+  type: str
+  help: What is your organization name?
+  when: "{% if template != 'ess' %}true{% endif %}"
+namespace_package:
+  default: 'ess'
+  type: str
+  help: Use a namespace package with this name. If empty, no namespace package is used.
+  when: "{% if template != 'ess' %}true{% endif %}"
+description:
+  type: str
+  help: Brief description?
+  when: "{% if template != 'ess' %}true{% endif %}"
+min_python:
+  type: str
+  help: Minimum Python version?
+  when: "{% if template != 'ess' %}true{% endif %}"
+max_python:
+  type: str
+  help: Maximum Python version that is known to work?
+  when: "{% if template != 'ess' %}true{% endif %}"
+year:
+  type: int
+  default: 2026
+  when: "{% if template != 'ess' %}true{% endif %}"
+nightly_deps:
+  type: str
+  help: |
+    List of dependencies to install from GitHub during nightly builds,
+    separated by commas. Make sure to also list transitive dependencies,
+    otherwise their released versions will be used. Specify either a
+    repository name or 'org/repo'. If no organization is given it defaults
+    to 'scipp'. In either case, the 'main' branch will be used. Example:
+        scipp,sciline,dask/dask
+  when: "{% if template != 'ess' %}true{% endif %}"
+related_projects:
+  type: str
+  help: |
+    List of related projects, separated by commas.
+    This will be used to generate a list of links in the documentation.
+    For example, "Scipp,Sciline,Plopp".
+  when: "{% if template != 'ess' %}true{% endif %}"
 
