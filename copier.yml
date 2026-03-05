@@ -80,6 +80,6 @@ related_projects:
   when: "{% if template != 'ess' %}true{% endif %}"
 
 _tasks:
-  - command: "copier copy gh:scipp/ess_template --vcs-ref subpackage-template ./packages/{{ subpackages[0].name }} --trust -d template=\"subpackages\""
-    when: "{% if template == 'ess' %}true{% endif %}"
+  - command: "for [ sub_package_name in ( {% for subpackage in subpackages %}{{subpackage.name}} {% endfor %}) ]; do copier copy gh:scipp/ess_template --vcs-ref subpackage-template ./packages/${sub_package_name} --trust -d template=\"subpackages\""
+    when: "{% if template != 'ess' %}true{% endif %}"
 
