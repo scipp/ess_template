@@ -45,6 +45,9 @@ test = [
 "Source" = "https://github.com/{{orgname}}/{{projectname}}"
 
 [tool.setuptools_scm]
+root = "../.."
+tag_regex = "^{{ projectname }}/(?P<version>[vV]?\\d+(?:\\.\\d+)*(?:[._-]?\\w+)*)$"
+git_describe_command = [ "git", "describe", "--dirty", "--long", "--match", "{{ projectname }}/*[0-9]*"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
